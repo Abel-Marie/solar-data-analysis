@@ -77,3 +77,36 @@ def plot_time_series(df, column, time_column):
         plt.show()
     else:
         print(f"Columns {column} or {time_column} not found in the DataFrame.")
+        
+        
+# Functions to plot time series by month (GHI, DNI, DHI, Tamb)
+def plot_time_series_monthly(df, column, time_column):
+    
+    if column in df.columns and time_column in df.columns:
+        df['month'] = df[time_column].dt.month
+        monthly_data = df.groupby('month')[column].mean()  
+        plt.figure(figsize=(10, 6))
+        monthly_data.plot(kind='bar', color='orange')
+        plt.title(f'Monthly Average of {column}')
+        plt.xlabel('Month')
+        plt.ylabel(column)
+        plt.xticks(rotation=0)
+        plt.show()
+    else:
+        print(f"Columns {column} or {time_column} not found in the DataFrame.")
+
+# function to plot time series by hour (GHI, DNI, DHI, Tamb)
+def plot_time_series_hourly(df, column, time_column):
+    
+    if column in df.columns and time_column in df.columns:
+        df['hour'] = df[time_column].dt.hour
+        hourly_data = df.groupby('hour')[column].mean()  
+        plt.figure(figsize=(10, 6))
+        hourly_data.plot(kind='line', color='blue', marker='o')
+        plt.title(f'Hourly Average of {column}')
+        plt.xlabel('Hour of the Day')
+        plt.ylabel(column)
+        plt.xticks(rotation=0)
+        plt.show()
+    else:
+        print(f"Columns {column} or {time_column} not found in the DataFrame.")
