@@ -44,13 +44,8 @@ def check_negative_values(df, columns):
     return negative_values_df
 
 
-
-
 def clean_missing_values(df, strategy='mean'):
-    """
-    Handle missing values in the DataFrame by filling them.
-    Options for strategy: 'mean', 'median', 'mode', 'drop'.
-    """
+ 
     if strategy == 'mean':
         df.fillna(df.mean(), inplace=True)
     elif strategy == 'median':
@@ -71,28 +66,33 @@ def remove_duplicates(df):
     df.drop_duplicates(inplace=True)
     return df
 
-def convert_columns_to_datetime(df, date_columns):
-    """
-    Convert specified columns to datetime format.
-    :param df: The DataFrame containing the data.
-    :param date_columns: List of column names that should be converted to datetime.
-    """
-    for col in date_columns:
-        if col in df.columns:
-            df[col] = pd.to_datetime(df[col], errors='coerce')
-            print(f"Column {col} converted to datetime.")
+# def convert_columns_to_datetime(df, date_columns):
+  
+#     for col in date_columns:
+#         if col in df.columns:
+#             df[col] = pd.to_datetime(df[col], errors='coerce')
+#             print(f"Column {col} converted to datetime.")
+#     return df
+
+
+
+# Function to handle outliers: remove or cap
+def handle_outliers(df, columns, method='remove', threshold=3):
+    
+    if method == 'remove':
+        # Remove outliers based on Z-score
+        for column in columns:
+            z_scores = (df[column] - df[column].mean()) / df[column].std()
+            df = df[z_scores.abs() <= threshold]  # Keep only non-outlier data
+    elif method == 'cap':
+        # Cap outliers by replacing them with the nearest non-outlier value
+        for column in columns:
+            z_scores = (df[column] - df[column].mean()) / df[column].std()
+            lower_limit = df[column].mean() - threshold * df[column].std()
+            upper_limit = df[column].mean() + threshold * df[column].std()
+            df[column] = np.where(df[column] < lower_limit, lower_limit, df[column])
+            df[column] = np.where(df[column] > upper_limit, upper_limit, df[column])
+    
     return df
 
-def normalize_columns(df, columns):
-    """
-    Normalize the specified columns (min-max scaling).
-    :param df: The DataFrame containing the data.
-    :param columns: List of column names to normalize.
-    """
-    for col in columns:
-        if col in df.columns:
-            min_val = df[col].min()
-            max_val = df[col].max()
-            df[col] = (df[col] - min_val) / (max_val - min_val)
-            print(f"Column {col} normalized.")
-    return df
+        
