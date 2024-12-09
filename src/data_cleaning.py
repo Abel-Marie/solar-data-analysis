@@ -45,7 +45,6 @@ def check_negative_values(df, columns):
 
 
 
-
 def clean_missing_values(df, strategy='mean'):
     """
     Handle missing values in the DataFrame by filling them.
@@ -84,11 +83,7 @@ def convert_columns_to_datetime(df, date_columns):
     return df
 
 def normalize_columns(df, columns):
-    """
-    Normalize the specified columns (min-max scaling).
-    :param df: The DataFrame containing the data.
-    :param columns: List of column names to normalize.
-    """
+   
     for col in columns:
         if col in df.columns:
             min_val = df[col].min()
@@ -96,3 +91,24 @@ def normalize_columns(df, columns):
             df[col] = (df[col] - min_val) / (max_val - min_val)
             print(f"Column {col} normalized.")
     return df
+
+# Function to handle outliers: remove or cap
+def handle_outliers(df, columns, method='remove', threshold=3):
+    
+    if method == 'remove':
+        # Remove outliers based on Z-score
+        for column in columns:
+            z_scores = (df[column] - df[column].mean()) / df[column].std()
+            df = df[z_scores.abs() <= threshold]  # Keep only non-outlier data
+    elif method == 'cap':
+        # Cap outliers by replacing them with the nearest non-outlier value
+        for column in columns:
+            z_scores = (df[column] - df[column].mean()) / df[column].std()
+            lower_limit = df[column].mean() - threshold * df[column].std()
+            upper_limit = df[column].mean() + threshold * df[column].std()
+            df[column] = np.where(df[column] < lower_limit, lower_limit, df[column])
+            df[column] = np.where(df[column] > upper_limit, upper_limit, df[column])
+    
+    return df
+
+        
