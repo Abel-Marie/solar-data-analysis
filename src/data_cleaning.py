@@ -1,4 +1,4 @@
-# src/data_cleaning.py
+
 import pandas as pd
 
 def load_data(file_path):
@@ -66,26 +66,16 @@ def remove_duplicates(df):
     df.drop_duplicates(inplace=True)
     return df
 
-# def convert_columns_to_datetime(df, date_columns):
-  
-#     for col in date_columns:
-#         if col in df.columns:
-#             df[col] = pd.to_datetime(df[col], errors='coerce')
-#             print(f"Column {col} converted to datetime.")
-#     return df
 
-
-
-# Function to handle outliers: remove or cap
 def handle_outliers(df, columns, method='remove', threshold=3):
     
     if method == 'remove':
-        # Remove outliers based on Z-score
+        
         for column in columns:
             z_scores = (df[column] - df[column].mean()) / df[column].std()
-            df = df[z_scores.abs() <= threshold]  # Keep only non-outlier data
+            df = df[z_scores.abs() <= threshold]  
     elif method == 'cap':
-        # Cap outliers by replacing them with the nearest non-outlier value
+        
         for column in columns:
             z_scores = (df[column] - df[column].mean()) / df[column].std()
             lower_limit = df[column].mean() - threshold * df[column].std()

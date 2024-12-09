@@ -105,7 +105,7 @@ def plot_wind_rose(df, wind_direction_column='WD', wind_speed_column='WS'):
     wind_speed = wind_speed.dropna()
     
     # Create wind rose using a polar plot
-    angles = np.deg2rad(wind_dir)  # Convert degrees to radians
+    angles = np.deg2rad(wind_dir)  
     plt.figure(figsize=(8, 8))
     plt.subplot(projection='polar')
     
